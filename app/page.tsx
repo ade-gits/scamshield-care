@@ -120,7 +120,11 @@ const saveTrustedContact = () => {
         contactEmail: trustedContact.email,
         contactName: trustedContact.name,
         message: message,
-        risk: result?.risk || "high",
+        risk: result.toLowerCase().includes("high")
+  ? "high"
+  : result.toLowerCase().includes("medium")
+  ? "medium"
+  : "low",
         advice:
           "Please contact your loved one before they respond, click any link, or send money.",
       }),
