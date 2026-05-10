@@ -7,13 +7,68 @@ export default function Home() {
   const [result, setResult] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [contactName, setContactName] = useState("");
+const [contactEmail, setContactEmail] = useState("");
+const [trustedContact, setTrustedContact] = useState<{ name: string; email: string } | null>(null);
 
+
+const saveTrustedContact = () => {
+  if (!contactName.trim() || !contactEmail.trim()) {
+    setError("Please enter trusted contact name and email.");
+    return;
+  }
+
+  setTrustedContact({
+    name: contactName,
+    email: contactEmail,
+  });
+
+  setError("");
+  alert("Trusted contact saved.");
+};
   const analyze = async () => {
     if (loading) return;
 
     setError("");
     setResult("");
+<div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm mb-6">
+  <h2 className="text-xl font-bold text-slate-900 mb-2">
+    Add Trusted Contact
+  </h2>
 
+  <p className="text-slate-600 mb-4">
+    Add a family member, friend, or caregiver who should be alerted if a high-risk scam is detected.
+  </p>
+
+  <div className="grid gap-4 md:grid-cols-2">
+    <input
+      value={contactName}
+      onChange={(e) => setContactName(e.target.value)}
+      placeholder="Trusted contact name"
+      className="rounded-xl border border-slate-300 p-4 text-slate-900"
+    />npm run dev
+
+    <input
+      value={contactEmail}
+      onChange={(e) => setContactEmail(e.target.value)}
+      placeholder="Trusted contact email"
+      className="rounded-xl border border-slate-300 p-4 text-slate-900"
+    />
+  </div>
+
+  <button
+    onClick={saveTrustedContact}
+    className="mt-4 rounded-xl bg-slate-900 px-6 py-3 font-semibold text-white"
+  >
+    Save Trusted Contact
+  </button>
+
+  {trustedContact && (
+    <p className="mt-3 text-green-700">
+      Trusted contact saved: {trustedContact.name}
+    </p>
+  )}
+</div>
     if (!message.trim()) {
       setError("Please paste a suspicious message.");
       return;
@@ -44,12 +99,101 @@ export default function Home() {
     }
   };
 
+  const sendAlert = async () => {
+  if (!trustedContact) {
+    setError("Please add a trusted contact first.");
+    return;
+  }
+
+  if (!message.trim()) {
+    setError("No message available to send.");
+    return;
+  }
+
+  try {
+    const response = await fetch("/api/send-alert", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        contactEmail: trustedContact.email,
+        contactName: trustedContact.name,
+        message: message,
+        risk: result?.risk || "high",
+        advice:
+          "Please contact your loved one before they respond, click any link, or send money.",
+      }),
+    });
+<button
+  onClick={sendAlert}
+  className="mt-4 rounded-xl bg-red-600 px-6 py-3 font-semibold text-white hover:bg-red-700"
+>
+  Send to Family
+</button>
+    const data = await response.json();
+
+   if (!response.ok) {
+  console.error("SEND ALERT ERROR:", data);
+
+  setError(
+    data?.error?.message ||
+    data?.error ||
+    "Failed to send email alert."
+  );
+
+  return;
+}
+
+    alert(`Email alert sent to ${trustedContact.name}`);
+  } catch (error) {
+    console.error(error);
+    setError("Something went wrong while sending email.");
+  }
+};
   const clearAll = () => {
     setMessage("");
     setResult("");
     setError("");
   };
+<div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm mb-6">
+  <h2 className="text-xl font-bold text-slate-900 mb-2">
+    Add Trusted Contact
+  </h2>
 
+  <p className="text-slate-600 mb-4">
+    Add a family member, friend, or caregiver who should be alerted if a high-risk scam is detected.
+  </p>
+
+  <div className="grid gap-4 md:grid-cols-2">
+    <input
+      value={contactName}
+      onChange={(e) => setContactName(e.target.value)}
+      placeholder="Trusted contact name"
+      className="rounded-xl border border-slate-300 p-4 text-slate-900"
+    />
+
+    <input
+      value={contactEmail}
+      onChange={(e) => setContactEmail(e.target.value)}
+      placeholder="Trusted contact email"
+      className="rounded-xl border border-slate-300 p-4 text-slate-900"
+    />
+  </div>
+
+  <button
+    onClick={saveTrustedContact}
+    className="mt-4 rounded-xl bg-slate-900 px-6 py-3 font-semibold text-white"
+  >
+    Save Trusted Contact
+  </button>
+
+  {trustedContact && (
+    <p className="mt-3 text-green-700">
+      Trusted contact saved: {trustedContact.name}
+    </p>
+  )}
+</div>
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900">
       <section className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
@@ -91,6 +235,44 @@ export default function Home() {
         <div className="grid gap-6 lg:grid-cols-[1.4fr_0.6fr]">
           <div className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
             <label className="mb-3 block text-sm font-semibold text-slate-800">
+<div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm mb-6">
+  <h2 className="text-xl font-bold text-slate-900 mb-2">
+    Add Trusted Contact
+  </h2>
+
+  <p className="text-slate-600 mb-4">
+    Add a family member, friend, or caregiver who should be alerted if a scam risk is detected.
+  </p>
+
+  <div className="grid gap-4 md:grid-cols-2">
+    <input
+      value={contactName}
+      onChange={(e) => setContactName(e.target.value)}
+      placeholder="Trusted contact name"
+      className="rounded-xl border border-slate-300 p-4 text-slate-900"
+    />
+
+    <input
+      value={contactEmail}
+      onChange={(e) => setContactEmail(e.target.value)}
+      placeholder="Trusted contact email"
+      className="rounded-xl border border-slate-300 p-4 text-slate-900"
+    />
+  </div>
+
+  <button
+    onClick={saveTrustedContact}
+    className="mt-4 rounded-xl bg-slate-900 px-6 py-3 font-semibold text-white"
+  >
+    Save Trusted Contact
+  </button>
+
+  {trustedContact && (
+    <p className="mt-3 text-green-700">
+      Trusted contact saved: {trustedContact.name}
+    </p>
+  )}
+</div>
               Paste suspicious message, email, or link
             </label>
 
@@ -157,6 +339,14 @@ export default function Home() {
             </p>
             <div className="mt-3 whitespace-pre-wrap rounded-2xl border border-slate-200 bg-slate-50 p-5 text-base leading-8 text-slate-800">
               {result}
+              {result && (
+  <button
+    onClick={sendAlert}
+    className="mt-6 rounded-xl bg-red-600 px-6 py-3 font-semibold text-white hover:bg-red-700"
+  >
+    Send to Family
+  </button>
+)}
             </div>
           </section>
         )}
